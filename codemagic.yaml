@@ -1,0 +1,27 @@
+workflows:
+  native-android:
+    name: Focus Clock
+    max_build_duration: 120
+    instance_type: mac_mini_m1
+    environment:
+      android_signing:
+        - "focus_clock_keystore"
+      vars:
+        PACKAGE_NAME: "com.moksh.focusclock"
+      java: 17
+    scripts:
+      - name: Build Path
+        script: echo "$CM_BUILD_DIR"
+      - name: Set Android SDK location
+        script: echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/local.properties"
+      - name: Build Android release
+        script: ./gradlew assembleProductionRelease
+    artifacts:
+      - app/build/outputs/**/*.apk
+    publishing:
+      email:
+        recipients:
+          - tehlanmoksh@gmail.com
+        notify:
+          success: true
+          failure: false

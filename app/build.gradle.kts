@@ -23,6 +23,17 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            if (System.getenv()["CI"] != null) { // CI=true is exported by Codemagic
+                storeFile = System.getenv()["CM_KEYSTORE_PATH"]?.let { file(it) }
+                storePassword = System.getenv()["CM_KEYSTORE_PASSWORD"]
+                keyAlias = System.getenv()["CM_KEY_ALIAS"]
+                keyPassword = System.getenv()["CM_KEY_PASSWORD"]
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -31,6 +42,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
